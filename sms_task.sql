@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time:  4 март 2022 в 09:28
+-- Generation Time:  5 март 2022 в 18:31
 -- Версия на сървъра: 5.7.37-0ubuntu0.18.04.1
 -- PHP Version: 7.2.24-0ubuntu0.18.04.10
 
@@ -30,7 +30,9 @@ CREATE TABLE `attempts` (
   `id` int(11) NOT NULL,
   `attempt` datetime NOT NULL,
   `success` tinyint(1) DEFAULT NULL,
-  `codeId` int(11) DEFAULT NULL
+  `codeId` int(11) DEFAULT NULL,
+  `phone` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -59,13 +61,6 @@ CREATE TABLE `doctrine_migration_versions` (
   `executed_at` datetime DEFAULT NULL,
   `execution_time` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Схема на данните от таблица `doctrine_migration_versions`
---
-
-INSERT INTO `doctrine_migration_versions` (`version`, `executed_at`, `execution_time`) VALUES
-('DoctrineMigrations\\Version20220303215331', '2022-03-03 23:53:44', 457);
 
 -- --------------------------------------------------------
 
@@ -118,12 +113,12 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `attempts`
 --
 ALTER TABLE `attempts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 --
 -- AUTO_INCREMENT for table `codes`
 --
 ALTER TABLE `codes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 --
 -- AUTO_INCREMENT for table `user`
 --

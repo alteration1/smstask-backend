@@ -38,7 +38,7 @@ class User
      */
     private $created;
 
-    public function __construct($phone = null, $email = null, $password = null)
+    public function __construct($email = null, $phone = null, $password = null)
     {
         if($phone){
             $this->phone = $phone;        

@@ -40,7 +40,7 @@ class RegisterController extends AbstractController
             $user = new User($content['email'], $content['phone'], $content['password']);
             $this->entityManager->persist($user);
             $this->entityManager->flush();
-            return new JsonResponse(['message' => "Your phone has been successfully validated."], 
+            return new JsonResponse(['message' => "Your user has been successfully registered."], 
         JsonResponse::HTTP_CREATED);
         }
         

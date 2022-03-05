@@ -31,7 +31,16 @@ class SendCodeController extends AbstractController
         if(!isset($content['phone']) && !$content['phone']){
             throw new NotFoundHttpException('Phone not found.');
         }
-        $phone = $content['phone'];       
+        $phone = $content['phone'];    
+        
+         //check if phone was already verified  
+        $isVerified = $this->entityManager
+            ->getRepository(Codes::class)
+            ->findOneBy(['success' => true, 'phone' => $phone]);
+        if($isVerified){
+            return new JsonResponse(['check' => $isVerified], JsonResponse::HTTP_OK);
+        }    
+
         //find valid code from less than one minute
         $validCodeFromOneMinute = $this->entityManager
             ->getRepository(Codes::class)

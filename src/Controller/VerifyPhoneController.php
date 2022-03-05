@@ -21,6 +21,35 @@ class VerifyPhoneController extends AbstractController
     public function __construct(EntityManagerInterface $entityManager) {
         $this->entityManager = $entityManager;
     }
+
+      /**
+     * @Route("/api/check/phone", name="app_check_phone", methods={"POST"})
+     */
+    public function checkPhone(Request $request): JsonResponse
+    {
+        $content = json_decode($request->getContent(), true);
+        
+        if(!isset($content['phone']) && !$content['phone']){
+            throw new NotFoundHttpException('Phone not found.');
+        }
+        $phone = $content['phone'];
+
+        $isVerified = $this->isVerified($phone);
+        
+        return new JsonResponse(['check' => $isVerified], JsonResponse::HTTP_OK);
+
+    }
+
+    public function isVerified($phone){
+        $isVerified = $this->entityManager
+            ->getRepository(Codes::class)
+            ->findOneBy(['success' => true, 'phone' => $phone]);
+        if($isVerified){
+            return true;
+        }else{
+            return false;
+        }
+    }
    
     /**
      * @Route("/api/verify/phone", name="app_verify_phone", methods={"POST"})
@@ -28,13 +57,20 @@ class VerifyPhoneController extends AbstractController
     public function verifyPhone(Request $request): JsonResponse
     {
         $content = json_decode($request->getContent(), true);
-        if(!isset($content['code']) && !$content['code']){
-            throw new NotFoundHttpException('Code not found.');
-        }
+        
         if(!isset($content['phone']) && !$content['phone']){
             throw new NotFoundHttpException('Phone not found.');
         }
         $phone = $content['phone'];
+        $check = $this->isVerified($phone);
+
+        if($check){
+            return new JsonResponse(['message' => "Your phone has been already validated."], JsonResponse::HTTP_OK);
+        }
+        
+        if(!isset($content['code']) && !$content['code']){
+            throw new NotFoundHttpException('Code not found.');
+        }
         $code = $content['code'];
         //does code muach
         $verifiedCode = $this->entityManager
