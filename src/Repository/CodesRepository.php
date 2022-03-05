@@ -46,8 +46,8 @@ class CodesRepository extends ServiceEntityRepository
     }
 
     public function findValidFromOneMinuteAgo($phone): ?array
-    {      
-        $date = new \DateTime('1 minute ago');    
+    {
+        $date = new \DateTime('1 minute ago');
         return $this->createQueryBuilder('c')
             ->andWhere('c.sendAt > :send')
             ->setParameter('send', $date->format('Y-m-d H:i:s'))
@@ -58,21 +58,5 @@ class CodesRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-    // /**
-    //  * @return Codes[] Returns an array of Codes objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
 
 }

@@ -22,12 +22,12 @@ class Attempts
      */
     private $attempt;
 
-     /**
+    /**
      * @ORM\Column(type="string", length=255)
      */
     private $phone;
 
-     /**
+    /**
      * @ORM\Column(type="string", length=255)
      */
     private $code;
@@ -38,7 +38,7 @@ class Attempts
      *   @ORM\JoinColumn(name="codeId", referencedColumnName="id")
      * })
      */
-    private $codeId;   
+    private $codeId;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -47,10 +47,10 @@ class Attempts
 
     public function __construct($phone = null, $code = null)
     {
-        if($phone){
-            $this->phone = $phone;        
+        if ($phone) {
+            $this->phone = $phone;
         }
-        if($code){
+        if ($code) {
             $this->code = $code;
         }
         $this->attempt = new \DateTime;

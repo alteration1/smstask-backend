@@ -52,10 +52,10 @@ class Codes
     public function __construct($phone = null, $code = null)
     {
         $this->attempts = new ArrayCollection();
-        if($phone){
-            $this->phone = $phone;        
+        if ($phone) {
+            $this->phone = $phone;
         }
-        if($code){
+        if ($code) {
             $this->code = $code;
         }
         $this->sendAt = new \DateTime;

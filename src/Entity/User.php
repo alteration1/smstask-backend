@@ -40,13 +40,13 @@ class User
 
     public function __construct($email = null, $phone = null, $password = null)
     {
-        if($phone){
-            $this->phone = $phone;        
+        if ($phone) {
+            $this->phone = $phone;
         }
-        if($email){
+        if ($email) {
             $this->email = $email;
         }
-        if($password){
+        if ($password) {
             $this->password = $password;
         }
         $this->created = new \DateTime;
