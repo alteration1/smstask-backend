@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Controller\SendSmsController;
 use App\Entity\Attempts;
 use App\Entity\SmsText;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -36,12 +37,27 @@ class VerifyPhoneController extends AbstractController
     {
         $content = json_decode($request->getContent(), true);
 
-        if (!isset($content['phone']) && !$content['phone']) {
+        if (!isset($content['phone']) || !$content['phone']) {
             throw new NotFoundHttpException('Phone not found.');
         }
         $phone = $content['phone'];
 
+        if (!isset($content['email']) || !$content['email']) {
+            throw new NotFoundHttpException('Email not found.');
+        }
+        $email = $content['email'];
+
         $isVerified = $this->sendSmsService->isVerified($phone);
+        //to do check if another user use this phone
+        if ($isVerified) {
+            $user = $this->entityManager
+                ->getRepository(User::class)
+                ->findOneBy(['phone' => $phone]);
+            if ($user && $user->getEmail() !== $email) {
+                return new JsonResponse(['error' => 'This phone was used from another user.'],
+                    JsonResponse::HTTP_BAD_REQUEST);
+            }
+        }
 
         return new JsonResponse(['check' => $isVerified], JsonResponse::HTTP_OK);
 
