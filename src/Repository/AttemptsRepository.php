@@ -45,4 +45,16 @@ class AttemptsRepository extends ServiceEntityRepository
         }
     }
 
+    public function isPhoneVerified(string $phone): ?array
+    {
+        return $this->createQueryBuilder('a')
+            ->join('a.codeId', 'c')
+            ->andWhere('a.success = :success')
+            ->setParameter('success', true)
+            ->andWhere('c.phone = :phone')
+            ->setParameter('phone', $phone)
+            ->getQuery()
+            ->getResult();
+    }
+
 }

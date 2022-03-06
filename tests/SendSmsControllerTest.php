@@ -9,7 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  *
  * @author Rossana Pencheva <rossana.ruseva@gmail.com>
  */
-class SendCodeControllerTest extends WebTestCase
+class SendSmsControllerTest extends WebTestCase
 {
     public function testSendCodePOST()
     {

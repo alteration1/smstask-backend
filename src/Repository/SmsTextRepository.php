@@ -2,30 +2,30 @@
 
 namespace App\Repository;
 
-use App\Entity\Codes;
+use App\Entity\SmsText;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Codes|null find($id, $lockMode = null, $lockVersion = null)
- * @method Codes|null findOneBy(array $criteria, array $orderBy = null)
- * @method Codes[]    findAll()
- * @method Codes[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method SmsText|null find($id, $lockMode = null, $lockVersion = null)
+ * @method SmsText|null findOneBy(array $criteria, array $orderBy = null)
+ * @method SmsText[]    findAll()
+ * @method SmsText[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CodesRepository extends ServiceEntityRepository
+class SmsTextRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Codes::class);
+        parent::__construct($registry, SmsText::class);
     }
 
     /**
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function add(Codes $entity, bool $flush = true): void
+    public function add(SmsText $entity, bool $flush = true): void
     {
         $this->_em->persist($entity);
         if ($flush) {
@@ -37,7 +37,7 @@ class CodesRepository extends ServiceEntityRepository
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function remove(Codes $entity, bool $flush = true): void
+    public function remove(SmsText $entity, bool $flush = true): void
     {
         $this->_em->remove($entity);
         if ($flush) {
@@ -45,7 +45,7 @@ class CodesRepository extends ServiceEntityRepository
         }
     }
 
-    public function findValidFromOneMinuteAgo($phone): ?array
+    public function findValidFromOneMinuteAgo(string $phone): ?array
     {
         $date = new \DateTime('1 minute ago');
         return $this->createQueryBuilder('c')
@@ -57,6 +57,17 @@ class CodesRepository extends ServiceEntityRepository
             ->setParameter('phone', $phone)
             ->getQuery()
             ->getResult();
+    }
+
+    public function findValidCode(string $phone): ?SmsText
+    {
+        $where = 'c.valid = :val AND c.phone = :phone AND c.code IS NOT NULL ';
+        return $this->createQueryBuilder('c')
+            ->where($where)
+            ->setParameter('val', true)
+            ->setParameter('phone', $phone)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
 }

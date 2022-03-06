@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\CodesRepository;
+use App\Repository\SmsTextRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=CodesRepository::class)
+ * @ORM\Entity(repositoryClass=SmsTextRepository::class)
  */
-class Codes
+class SmsText
 {
     /**
      * @ORM\Id
@@ -25,9 +25,14 @@ class Codes
     private $phone;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $code;
+
+    /**
+     * @ORM\Column(type="text")
+     */
+    private $text;
 
     /**
      * @ORM\Column(type="datetime")
@@ -40,16 +45,11 @@ class Codes
     private $valid;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $success;
-
-    /**
      * @ORM\OneToMany(targetEntity=Attempts::class, mappedBy="codeId")
      */
     private $attempts;
 
-    public function __construct($phone = null, $code = null)
+    public function __construct(string $phone = '', string $text = '', string $code = '')
     {
         $this->attempts = new ArrayCollection();
         if ($phone) {
@@ -57,9 +57,15 @@ class Codes
         }
         if ($code) {
             $this->code = $code;
+            $this->valid = true;
+        } else {
+            $this->valid = false;
+        }
+        if ($text) {
+            $this->text = $text;
         }
         $this->sendAt = new \DateTime;
-        $this->valid = true;
+
     }
 
     public function getId(): ?int
@@ -91,6 +97,18 @@ class Codes
         return $this;
     }
 
+    public function getText(): ?string
+    {
+        return $this->text;
+    }
+
+    public function setText(string $text): self
+    {
+        $this->text = $text;
+
+        return $this;
+    }
+
     public function getSendAt(): ?\DateTimeInterface
     {
         return $this->sendAt;
@@ -111,18 +129,6 @@ class Codes
     public function setValid(?bool $valid): self
     {
         $this->valid = $valid;
-
-        return $this;
-    }
-
-    public function getSuccess(): ?bool
-    {
-        return $this->success;
-    }
-
-    public function setSuccess(?bool $success): self
-    {
-        $this->success = $success;
 
         return $this;
     }

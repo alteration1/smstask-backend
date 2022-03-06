@@ -1,7 +1,8 @@
 <?php
 namespace App\Controller;
 
-use App\Entity\Codes;
+use App\Entity\Attempts;
+use App\Entity\SmsText;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -12,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @author Rossana Pencheva <rossana.ruseva@gmail.com>
  */
-class SendCodeController extends AbstractController
+class SendSmsController extends AbstractController
 {
     /**
      * @var EntityManagerInterface
@@ -35,16 +36,14 @@ class SendCodeController extends AbstractController
         $phone = $content['phone'];
 
         //check if phone was already verified
-        $isVerified = $this->entityManager
-            ->getRepository(Codes::class)
-            ->findOneBy(['success' => true, 'phone' => $phone]);
+        $isVerified = $this->isVerified($phone);
         if ($isVerified) {
             return new JsonResponse(['check' => $isVerified], JsonResponse::HTTP_OK);
         }
 
         //find valid code from less than one minute
         $validCodeFromOneMinute = $this->entityManager
-            ->getRepository(Codes::class)
+            ->getRepository(SmsText::class)
             ->findValidFromOneMinuteAgo($phone);
         if ($validCodeFromOneMinute) {
             return new JsonResponse(['warning' => "А code has already been sent to your phone."],
@@ -52,33 +51,47 @@ class SendCodeController extends AbstractController
         } else {
             //if old codes are still valid make then unvalid
             $validCodes = $this->entityManager
-                ->getRepository(Codes::class)
+                ->getRepository(SmsText::class)
                 ->findBy(['valid' => true, 'phone' => $phone]);
             foreach ($validCodes as $validCode) {
                 $validCode->setValid(false);
                 $this->entityManager->persist($validCode);
                 $this->entityManager->flush();
             }
+            $code = $this->generateNewCode();
+            $text = 'This is your verification code ' . $code;
             //send code to phone
-            $this->sendCode($phone);
+            $this->sendSms($phone, $text, $code);
         }
 
         return new JsonResponse(['message' => "We've sent a verification code to your phone."],
             JsonResponse::HTTP_OK);
     }
 
-    protected function sendCode($phone)
+    public function sendSms(string $phone, string $text, string $code = ''): SmsText
     {
-        $code = $this->generateNewCode();
-        $codeSended = new Codes($phone, $code);
-        $this->entityManager->persist($codeSended);
+        $smsSended = new SmsText($phone, $text, $code);
+        $this->entityManager->persist($smsSended);
         $this->entityManager->flush();
+        return $smsSended;
     }
 
-    protected function generateNewCode()
+    protected function generateNewCode(): int
     {
         $randomNumber = mt_rand(100000, 999999);
         return $randomNumber;
+    }
+
+    public function isVerified(string $phone): bool
+    {
+        $isVerified = $this->entityManager
+            ->getRepository(Attempts::class)
+            ->isPhoneVerified($phone);
+        if ($isVerified) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

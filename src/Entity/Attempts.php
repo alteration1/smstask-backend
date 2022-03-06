@@ -23,17 +23,7 @@ class Attempts
     private $attempt;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $phone;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $code;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Codes::class, inversedBy="attempts")
+     * @ORM\ManyToOne(targetEntity=SmsText::class, inversedBy="attempts")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="codeId", referencedColumnName="id")
      * })
@@ -45,14 +35,8 @@ class Attempts
      */
     private $success;
 
-    public function __construct($phone = null, $code = null)
+    public function __construct()
     {
-        if ($phone) {
-            $this->phone = $phone;
-        }
-        if ($code) {
-            $this->code = $code;
-        }
         $this->attempt = new \DateTime;
     }
 
@@ -73,12 +57,12 @@ class Attempts
         return $this;
     }
 
-    public function getCodeId(): ?Codes
+    public function getCodeId(): ?SmsText
     {
         return $this->codeId;
     }
 
-    public function setCodeId(?Codes $codeId): self
+    public function setCodeId(?SmsText $codeId): self
     {
         $this->codeId = $codeId;
 
@@ -97,27 +81,4 @@ class Attempts
         return $this;
     }
 
-    public function getPhone(): ?string
-    {
-        return $this->phone;
-    }
-
-    public function setPhone(string $phone): self
-    {
-        $this->phone = $phone;
-
-        return $this;
-    }
-
-    public function getCode(): ?string
-    {
-        return $this->code;
-    }
-
-    public function setCode(string $code): self
-    {
-        $this->code = $code;
-
-        return $this;
-    }
 }

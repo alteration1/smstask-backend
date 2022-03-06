@@ -2,7 +2,7 @@
 
 namespace App\Tests;
 
-use App\Entity\Codes;
+use App\Entity\SmsText;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
@@ -29,7 +29,8 @@ class VerifyPhoneControllerTest extends WebTestCase
         $this->entityManager = static::$kernel->getContainer()
             ->get('doctrine')
             ->getManager();
-        $code = new Codes($this->phone, $this->code);
+        $text = 'This is your verification code ' . $this->code;
+        $code = new SmsText($this->phone, $text, $this->code);
         $this->entityManager->persist($code);
         $this->entityManager->flush();
     }

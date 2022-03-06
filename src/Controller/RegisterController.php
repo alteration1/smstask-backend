@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Controller\SendSmsController;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,9 +20,15 @@ class RegisterController extends AbstractController
      */
     private $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    /**
+     * @var SendSmsController
+     */
+    private $sendSmsService;
+
+    public function __construct(EntityManagerInterface $entityManager, SendSmsController $sendSmsService)
     {
         $this->entityManager = $entityManager;
+        $this->sendSmsService = $sendSmsService;
     }
     /**
      * @Route("/api/register/user", name="app_register_user", methods={"POST"})
@@ -42,6 +49,7 @@ class RegisterController extends AbstractController
             $user = new User($content['email'], $content['phone'], $content['password']);
             $this->entityManager->persist($user);
             $this->entityManager->flush();
+            $this->sendSmsService->sendSms($content['phone'], 'Welcome to SMSBump!');
             return new JsonResponse(['message' => "Your user has been successfully registered."],
                 JsonResponse::HTTP_CREATED);
         }
