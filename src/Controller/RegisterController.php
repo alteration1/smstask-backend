@@ -49,7 +49,7 @@ class RegisterController extends AbstractController
             $user = new User($content['email'], $content['phone'], $content['password']);
             $this->entityManager->persist($user);
             $this->entityManager->flush();
-            $this->sendSmsService->sendSms($content['phone'], 'Welcome to SMSBump!');
+            $this->sendSmsService->sendSms($content['phone'], 'Welcome to the system!');
             return new JsonResponse(['message' => "Your user has been successfully registered."],
                 JsonResponse::HTTP_CREATED);
         }
